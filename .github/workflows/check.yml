@@ -12,6 +12,10 @@ permissions:
 jobs:
   check:
     runs-on: macos-15
+    # The online audit asks GitHub's API about the release; without a token
+    # a shared runner's address runs out of its 60 requests an hour.
+    env:
+      HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Update Homebrew
         run: |
