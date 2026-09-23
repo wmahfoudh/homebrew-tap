@@ -1,0 +1,62 @@
+# Installs the Oryx cask on a GitHub Mac the way a user would, then runs
+# Homebrew's own checks. Started by hand from the Actions tab after the
+# cask changes. It reads the tap from GitHub, so push first.
+name: Check the cask
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-15
+    steps:
+      - name: Update Homebrew
+        run: |
+          brew update
+          brew --version
+
+      - name: Install as the README says
+        run: brew install --cask wmahfoudh/tap/oryx
+
+      - name: Look at the installed app
+        if: ${{ !cancelled() }}
+        run: |
+          app=/Applications/Oryx.app
+          /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$app/Contents/Info.plist"
+          lipo -info "$app/Contents/MacOS/oryx"
+          ls "$app/Contents/Resources/themes" | wc -l
+          codesign --verify --strict --verbose=2 "$app"
+          echo "Quarantine attribute:"
+          xattr -p com.apple.quarantine "$app" || echo "none"
+          echo "Gatekeeper's verdict (a refusal is expected, the app is not notarized):"
+          spctl --assess --type execute -vv "$app" || true
+
+      # A copy without the quarantine attribute, so macOS runs the binary
+      # without asking; --version prints a line and opens no window.
+      - name: Run the binary
+        if: ${{ !cancelled() }}
+        run: |
+          ditto /Applications/Oryx.app "$RUNNER_TEMP/Oryx.app"
+          xattr -dr com.apple.quarantine "$RUNNER_TEMP/Oryx.app"
+          "$RUNNER_TEMP/Oryx.app/Contents/MacOS/oryx" --version
+
+      - name: Trust the tap for the checks
+        if: ${{ !cancelled() }}
+        run: brew trust wmahfoudh/tap
+
+      - name: Style
+        if: ${{ !cancelled() }}
+        run: brew style wmahfoudh/tap
+
+      - name: Audit
+        if: ${{ !cancelled() }}
+        run: brew audit --cask --strict --online wmahfoudh/tap/oryx
+
+      - name: Uninstall with zap
+        if: ${{ !cancelled() }}
+        run: |
+          brew uninstall --zap --cask wmahfoudh/tap/oryx
+          test ! -e /Applications/Oryx.app

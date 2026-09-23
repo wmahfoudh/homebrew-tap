@@ -4,7 +4,7 @@ Homebrew recipes for my apps.
 
 ## Oryx
 
-[Oryx](https://github.com/wmahfoudh/oryx) is a fast a fast, native and beautiful desktop viewer & editor for markdown and code with PDF export and eBooks rendering.
+[Oryx](https://github.com/wmahfoudh/oryx) is a fast, native and beautiful desktop viewer & editor for markdown and code with PDF export and eBooks rendering.
 
 ```
 brew install --cask wmahfoudh/tap/oryx
