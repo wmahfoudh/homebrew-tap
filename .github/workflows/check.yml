@@ -27,7 +27,7 @@ jobs:
           app=/Applications/Oryx.app
           /usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$app/Contents/Info.plist"
           lipo -info "$app/Contents/MacOS/oryx"
-          ls "$app/Contents/Resources/themes" | wc -l
+          find "$app/Contents/Resources/themes" -name '*.toml' | wc -l
           codesign --verify --strict --verbose=2 "$app"
           echo "Quarantine attribute:"
           xattr -p com.apple.quarantine "$app" || echo "none"
