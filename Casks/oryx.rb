@@ -1,6 +1,6 @@
 cask "oryx" do
-  version "1.2.0"
-  sha256 "a71ae65449a52849a3297f9bf0e20424f75238fb4ddf85e06f9405dddf558c85"
+  version "1.2.1"
+  sha256 "a9f1f89e2d5e627a8f59ac5c8ae0a116f10ede3d73fbd607309ea9e3fd758c34"
 
   url "https://github.com/wmahfoudh/oryx/releases/download/v#{version}/oryx-#{version}-macos-universal.dmg"
   name "Oryx"
